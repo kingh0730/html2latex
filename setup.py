@@ -22,6 +22,20 @@ install_reqs = parse_requirements(
     session=0,
 )
 
+try:
+    # newest versions.
+    # pip>=21.x.x
+    from pip._internal.req.constructors import (
+        install_req_from_parsed_requirement,
+    )
+except ImportError:
+    # pip<=20.x.x
+    def install_req_from_parsed_requirement(x):
+        return x
+
+# for pip==21.x.x convert ParsedRequirement into InstallRequirement.
+install_reqs = [install_req_from_parsed_requirement(req) for req in install_reqs]
+
 install_requires = [str(ir.req) for ir in install_reqs]
 
 
